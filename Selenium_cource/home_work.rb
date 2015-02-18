@@ -4,7 +4,7 @@ browser = Selenium::WebDriver.for :chrome
 
 
 
-browser.get 'http://demo.redmine.org'
+@browser.get 'http://demo.redmine.org'
 
 add_to_login = "700"
 login = "testuser" + add_to_login
