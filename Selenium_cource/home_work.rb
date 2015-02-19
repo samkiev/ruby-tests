@@ -3,7 +3,7 @@ require 'selenium-webdriver'
 @browser = Selenium::WebDriver.for :firefox
 
 #Main Values
-add_to_login = "849"
+add_to_login = "859"
 login = "testuser" + add_to_login
 password = login
 name = "name" + login
@@ -272,13 +272,13 @@ end
 
     create_account(login, password, name)#1-st User
 #Extract User ID
-      get_user_id
+
       user_id = get_user_id
       logged_out
 
     create_account(new_user_login, password, name_new_user) #second user
 #Extract New User ID
-      get_user_id
+      
       user_id_new_user = get_user_id
       logged_out
 
