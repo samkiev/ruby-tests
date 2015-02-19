@@ -256,10 +256,10 @@ end
     end
 
 #Check method of all issue visible
-        def check_displayed_issue(issue_id_bug, issue_id_feature, issue_id_support)
+        def check_displayed_issue(issue_id_bug)
             @browser.find_element(class: "selected").click
-            fail 'Did not meet expected result' unless(@browser.find_element(link_text: issue_id_bug))&&(@browser.find_element(link_text: issue_id_feature))&&(@browser.find_element(link_text: issue_id_support)).displayed?
-            puts "All issues are visible on ‘Issues’ tab = OK"
+            fail 'Did not meet expected result' unless @browser.find_element(link_text: issue_id_bug).displayed?
+            puts "All issue is visible on ‘Issues’ tab = OK"
         end
 #Extract issue ID
         def get_issue_id
@@ -271,15 +271,15 @@ end
   open_home_page
 
     create_account(login, password, name)#1-st User
-
-                  get_user_id                           #Extract User ID
-                                                                user_id = get_user_id
+#Extract User ID
+      get_user_id
+      user_id = get_user_id
       logged_out
 
     create_account(new_user_login, password, name_new_user) #second user
-
-                  get_user_id                                #Extract New User ID
-                                                                user_id_new_user = get_user_id
+#Extract New User ID
+      get_user_id
+      user_id_new_user = get_user_id
       logged_out
 
     logged_in(login, password)
@@ -289,20 +289,24 @@ end
     create_new_project(project_name)
 
     add_new_user_to_project(name_new_user, user_id_new_user)
+#Extract Project ID
+    project_user_id =  get_project_user_id
 
-             get_project_user_id                                           #Extract Project ID
-                                                                project_user_id =  get_project_user_id
     edit_user_roles(project_user_id)
 
     create_new_project_version(version_name)
 
     create_bug_insue(subject_bug, version_name)
-                                                                #Extract bug Value
-                                                                 issue_id_bug = get_issue_id
+#Extract bug Value
+    issue_id_bug = get_issue_id
+
     create_feature_issue(subject_feature)
-                                                                #Extract Feature Value
-                                                                  issue_id_feature = get_issue_id
+#Extract Feature Value
+      issue_id_feature = get_issue_id
+
     create_support_issue(subject_support)
-                                                                #Extract Support_inssue Value
-                                                                  issue_id_support = get_issue_id
-    check_displayed_issue(issue_id_bug, issue_id_feature,issue_id_support)
+#Extract Support_inssue Value
+      issue_id_support = get_issue_id
+    check_displayed_issue(issue_id_bug)
+    check_displayed_issue(issue_id_feature)
+    check_displayed_issue(issue_id_support)
