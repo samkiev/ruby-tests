@@ -1,12 +1,13 @@
 require 'selenium-webdriver'
-
+require_relative 'Verification'
 @browser = Selenium::WebDriver.for :chrome
 
 
 
-@browser.get 'http://demo.redmine.org'
 
-add_to_login = "703"
+open_home_page
+
+add_to_login = "749"
 login = "testuser" + add_to_login
 password = login
 name = "name" + login
@@ -18,6 +19,11 @@ version_name = "new_version"+add_to_login
 subject_bug = "bug_issue"
 subject_feature = "feature_issue"
 subject_support = "support_issue"
+
+#Open Home Page
+        def open_home_page
+          @browser.get 'http://demo.redmine.org'
+        end
 
 #Register_method
     def create_account(login, password, name)
@@ -35,24 +41,17 @@ subject_support = "support_issue"
                 select_by(:value, "en")
             @browser.find_element(name: "commit").click
             sleep 2
-
-      #Check registration
-            if (@browser.find_element(id: "flash_notice").text) == 'Ваша учётная запись активирована. Вы можете войти.'
-
-              puts 'User registration = OK'
-
-            else
-
-              puts 'Registration failed'
-
-            end
-            #SAVE ID witch use to find user
-              id_user = @browser.find_element(class: "active").attribute("href")[-5,5]
-                  puts "Id of new user = " + id_user
+      fail 'Did not meet expected text' unless message_is('Ваша учётная запись активирована. Вы можете войти.')
+            puts "Create new user = OK"
     end
+#Get text for Verification for "flash_notice"
+
+                def message_is(message)
+                  @browser.find_element(id: 'flash_notice').text.include? message
+                end
 
 
-#ID User Method
+#Get ID User Method
         def get_user_id
           id_user = @browser.find_element(class: "active").attribute("href")[-5, 5]
           return id_user
@@ -63,11 +62,15 @@ subject_support = "support_issue"
             @browser.find_element(class: "logout").click
                   sleep 2
         #Check logout
-            if (@browser.title) == "Redmine demo"
+            fail 'Did not meet expected Title Text' unless message_for_title('Redmine demo')
                      puts "Log out = OK"
-            else puts "Log out Failed"
-          end
         end
+#Get text for Verificatio for "Title"
+
+                def message_for_title(message)
+                  @browser.title.include? message
+                end
+
 
 #Login_method
     def logged_in(login, password)
@@ -77,12 +80,16 @@ subject_support = "support_issue"
       @browser.find_element(name: "login").click
       sleep 2
     #Check login
-      if (@browser.find_element(class: "active").text) == login
+      fail 'Did not meet expected Title Text' unless message_is_login(login)
         puts "Login  1-st user = OK"
-      else
-        puts "Login Failed"
-      end
+
     end
+
+#Get text for Verification of login
+
+def message_is_login(message)
+  @browser.find_element(class: "active").text.include? message
+end
 
 #Change password
     def change_password(password, new_password)
@@ -94,12 +101,11 @@ subject_support = "support_issue"
       @browser.find_element(name: "commit").click
       sleep 2
       #Check Change password
-        if (@browser.find_element(id: "flash_notice").text) == 'Password was successfully updated.'
+      fail 'Did not meet expected text' unless message_is'Password was successfully updated.'
             puts "Change password = OK"
-          else
-            puts "Change password = failed"
-          end
+
     end
+
 
 #Create new  project
     def create_new_project(project_name)
@@ -116,11 +122,9 @@ subject_support = "support_issue"
       @browser.find_element(name: "commit").click
       sleep 2
       # Check Creation
-        if (@browser.find_element(id: "flash_notice").text) == 'Successful creation.'
+      fail 'Did not meet expected text' unless message_is'Successful creation.'
           puts "Create new project = OK"
-        else
-          puts "Create new project = failed"
-        end
+
     end
 # Add another(new) user to the project
 
@@ -134,14 +138,18 @@ subject_support = "support_issue"
         @browser.find_element(css: "#new_membership>fieldset>p>label>input[value='4']").click
         @browser.find_element(id: "member-add-submit").click
     sleep 2
-
-      if @browser.find_element(partial_link_text: name_new_user).displayed?
-          puts "Add new user = OK"
-              else
-          puts "Create new project = failed"
-      end
+        fail 'Did not meet expected result' unless check_add_user(name_new_user)
+        puts "Create new project = OK"
 
     end
+
+#Get result  of add mew user"
+
+            def check_add_user(name_new_user)
+              @browser.find_element(partial_link_text: name_new_user).displayed?
+            end
+
+
 #Get Project New User ID method
         def get_project_user_id
             project_user_id = @browser.find_element(class: "even").attribute("id")[-5, 5]
@@ -155,13 +163,17 @@ subject_support = "support_issue"
           @browser.find_element(css: "#member-#{project_user_id}-roles-form input[value='Save']").click
     #Check Changes of role
       sleep 2
-
-        if (@browser.find_element(id: "member-#{project_user_id}-roles").text) == 'Reporter'
+          fail 'Did not meet expected text' unless check_role_user_message('Reporter',project_user_id)
         puts "Edit Roles new user = OK"
-           else
-              puts "Edit Roles new user  = failed"
-        end
+
     end
+
+#Get text for Verification of change roles
+
+              def check_role_user_message(message, project_user_id)
+                @browser.find_element(id: "member-#{project_user_id}-roles").text.include? message
+              end
+
 # Create Project Version
     def create_new_project_version(version_name)
       @browser.find_element(id: "tab-versions").click
@@ -169,13 +181,18 @@ subject_support = "support_issue"
       @browser.find_element(id: "version_name").send_keys version_name
       @browser.find_element(name: "commit").click
       sleep 2
-      if @browser.find_element(link_text: version_name).displayed?
+      fail 'Did not meet expected result' unless check_add_user(version_name)
         puts "Create Project version = OK"
-      else
-        puts "Create Project version = Failed"
 
-      end
     end
+
+#Get result of Version name"
+
+                  def check_create_version(version_name)
+                    @browser.find_element(partial_link_text: version_name).displayed?
+                  end
+
+
 #Create Bug insue
     def create_bug_insue(subject_bug, version_name)
       @browser.find_element(class: "new-issue").click
@@ -191,10 +208,13 @@ subject_support = "support_issue"
       #Selenium::WebDriver::Support::Select.new(@browser.find_element(:id, "issue_fixed_version_id")).
        #   select_by(:text, version_name)
       @browser.find_element(name: "commit").click
-      puts "Create Bug issue = OK"
-      sleep 2
-
+            sleep 2
+      issue_id_bug = @browser.find_element(css: "#flash_notice > a").attribute("href")[-5, 5]
+            fail 'Did not meet expected text' unless message_is("Issue ##{issue_id_bug} created.")
+                  puts "Create Bug issue = OK"
     end
+
+
 
 #Create Feature Issue
     def create_feature_issue(subject_feature)
@@ -211,9 +231,11 @@ subject_support = "support_issue"
     #Selenium::WebDriver::Support::Select.new(@browser.find_element(:id, "issue_fixed_version_id")).
     #   select_by(:text, version_name)
       @browser.find_element(name: "commit").click
-      puts "Create Feature issue = OK"
       sleep 2
 
+      issue_id_feature = @browser.find_element(css: "#flash_notice > a").attribute("href")[-5, 5]
+      fail 'Did not meet expected text' unless message_is("Issue ##{issue_id_feature} created.")
+            puts "Create Feature issue = OK"
     end
 
 #Create Support Issue
@@ -230,53 +252,65 @@ subject_support = "support_issue"
        #   select_by(:value, "4")
     #Selenium::WebDriver::Support::Select.new(@browser.find_element(:id, "issue_fixed_version_id")).
     #   select_by(:text, version_name)
+
       @browser.find_element(name: "commit").click
       sleep 2
+          issue_id_support = @browser.find_element(css: "#flash_notice > a").attribute("href")[-5, 5]
+      fail 'Did not meet expected text' unless message_is("Issue ##{issue_id_support} created.")
       puts "Create Support issue = OK"
     end
 
+#Check method of all issue visible
+        def check_displayed_issue(issue_id_bug, issue_id_feature, issue_id_support)
+            @browser.find_element(class: "selected").click
+            fail 'Did not meet expected result' unless(@browser.find_element(link_text: issue_id_bug))&&(@browser.find_element(link_text: issue_id_feature))&&(@browser.find_element(link_text: issue_id_support)).displayed?
+            puts "All issues are visible on ‘Issues’ tab = OK"
+        end
+#Extract issue ID
+        def get_issue_id
+          issue_id_bug = @browser.find_element(css: "#flash_notice > a").attribute("href")[-5, 5]
+        end
 
 #Main
-    create_account(login, password, name)
-            get_user_id                           #Extract User ID
-                                                                user_id = get_user_id
-    logged_out
 
-    create_account(new_user_login, password, name_new_user)
-            get_user_id                                #Extract New User ID
+  open_home_page
+
+    create_account(login, password, name)#1-st User
+
+                  get_user_id                           #Extract User ID
+                                                                user_id = get_user_id
+      logged_out
+
+    create_account(new_user_login, password, name_new_user) #second user
+
+                  get_user_id                                #Extract New User ID
                                                                 user_id_new_user = get_user_id
-    logged_out
+      logged_out
 
     logged_in(login, password)
 
-    change_password(password, new_password)
+      change_password(password, new_password)
 
-    create_new_project(project_name)
+        create_new_project(project_name)
 
-    add_new_user_to_project(name_new_user, user_id_new_user)
+          add_new_user_to_project(name_new_user, user_id_new_user)
 
             get_project_user_id                        #Extract Project ID
                                                                 project_user_id =  get_project_user_id
-    edit_user_roles(project_user_id)
+              edit_user_roles(project_user_id)
 
-    create_new_project_version(version_name)
+                create_new_project_version(version_name)
 
-    create_bug_insue(subject_bug, version_name)
+                  create_bug_insue(subject_bug, version_name)
+                                                                #Extract bug Value
+                                                                 issue_id_bug = get_issue_id
 
-                                                            #Extract bug value
-                      issue_id_bug = @browser.find_element(css: "#flash_notice > a").attribute("href")[-5, 5]
-
-    create_feature_issue(subject_feature)
+                    create_feature_issue(subject_feature)
                                                                 #Extract Feature Value
-                      issue_id_feature = @browser.find_element(css: "#flash_notice > a").attribute("href")[-5, 5]
+                                                                  issue_id_feature = get_issue_id
 
-    create_support_issue(subject_support)
+                      create_support_issue(subject_support)
                                                                 #Extract Support_inssue Value
-                      issue_id_support = @browser.find_element(css: "#flash_notice > a").attribute("href")[-5, 5]
+                                                                  issue_id_support = get_issue_id
 
-    @browser.find_element(class: "selected").click
-    if (@browser.find_element(link_text: issue_id_bug))&&(@browser.find_element(link_text: issue_id_feature))&&(@browser.find_element(link_text: issue_id_support)).displayed?
-      puts "All issues are visible on ‘Issues’ tab = OK"
-      else
-        puts "All issues are not visible"
-    end
+                        check_displayed_issue(issue_id_bug, issue_id_feature,issue_id_support)
