@@ -1,13 +1,9 @@
 require 'selenium-webdriver'
-require_relative 'Verification'
-@browser = Selenium::WebDriver.for :chrome
 
+@browser = Selenium::WebDriver.for :firefox
 
-
-
-open_home_page
-
-add_to_login = "749"
+#Main Values
+add_to_login = "849"
 login = "testuser" + add_to_login
 password = login
 name = "name" + login
@@ -41,7 +37,7 @@ subject_support = "support_issue"
                 select_by(:value, "en")
             @browser.find_element(name: "commit").click
             sleep 2
-      fail 'Did not meet expected text' unless message_is('Ваша учётная запись активирована. Вы можете войти.')
+      fail 'Did not meet expected text' unless message_is(('Ваша учётная запись активирована. Вы можете войти.')||('Your account has been activated. You can now log in.'))
             puts "Create new user = OK"
     end
 #Get text for Verification for "flash_notice"
@@ -53,8 +49,8 @@ subject_support = "support_issue"
 
 #Get ID User Method
         def get_user_id
-          id_user = @browser.find_element(class: "active").attribute("href")[-5, 5]
-          return id_user
+           @browser.find_element(class: "active").attribute("href")[-5, 5]
+
         end
 
 #Logout_method
@@ -143,7 +139,7 @@ end
 
     end
 
-#Get result  of add mew user"
+#Get result of add mew user"
 
             def check_add_user(name_new_user)
               @browser.find_element(partial_link_text: name_new_user).displayed?
@@ -152,9 +148,8 @@ end
 
 #Get Project New User ID method
         def get_project_user_id
-            project_user_id = @browser.find_element(class: "even").attribute("id")[-5, 5]
+           @browser.find_element(class: "even").attribute("id")[-5, 5]
 
-        return project_user_id
         end
 # Edit Users Roles
     def edit_user_roles(project_user_id)
@@ -289,28 +284,25 @@ end
 
     logged_in(login, password)
 
-      change_password(password, new_password)
+    change_password(password, new_password)
 
-        create_new_project(project_name)
+    create_new_project(project_name)
 
-          add_new_user_to_project(name_new_user, user_id_new_user)
+    add_new_user_to_project(name_new_user, user_id_new_user)
 
-            get_project_user_id                        #Extract Project ID
+             get_project_user_id                                           #Extract Project ID
                                                                 project_user_id =  get_project_user_id
-              edit_user_roles(project_user_id)
+    edit_user_roles(project_user_id)
 
-                create_new_project_version(version_name)
+    create_new_project_version(version_name)
 
-                  create_bug_insue(subject_bug, version_name)
+    create_bug_insue(subject_bug, version_name)
                                                                 #Extract bug Value
                                                                  issue_id_bug = get_issue_id
-
-                    create_feature_issue(subject_feature)
+    create_feature_issue(subject_feature)
                                                                 #Extract Feature Value
                                                                   issue_id_feature = get_issue_id
-
-                      create_support_issue(subject_support)
+    create_support_issue(subject_support)
                                                                 #Extract Support_inssue Value
                                                                   issue_id_support = get_issue_id
-
-                        check_displayed_issue(issue_id_bug, issue_id_feature,issue_id_support)
+    check_displayed_issue(issue_id_bug, issue_id_feature,issue_id_support)
