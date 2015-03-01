@@ -14,7 +14,7 @@ include Project
 include Issue
 
     @browser = Selenium::WebDriver.for :firefox
-    add_to_login = "968"
+    add_to_login = "972"
     login = "testuser" + add_to_login
     password = login
     name = "name" + login
@@ -37,17 +37,17 @@ include Issue
     #$browser.quit
     logged_out(@browser)
     create_account(new_user_login, new_password, name_new_user, @browser)
-          id_second_user = get_user_id(browser)
-    logged_out(browser)
+          id_second_user = get_user_id(@browser)
+    logged_out(@browser)
     logged_in(login, password, @browser)
     change_password(password, new_password, @browser)
     create_new_project(project_name, @browser)
     add_new_user_to_project(name_new_user, id_second_user, @browser)
-          project_user_id = get_project_user_id(browser)
+          project_user_id = get_project_user_id(@browser)
     edit_user_roles(project_user_id, @browser)
     create_new_project_version(version_name, @browser)
     create_bug_insue(subject_bug, version_name, bug, @browser)
-          issue_id_bug = get_issue_id(browser)
+          issue_id_bug = get_issue_id(@browser)
     create_bug_insue(subject_feature, version_name, feature, @browser)
           issue_id_feature = get_issue_id(@browser)
     create_bug_insue(subject_support, version_name, support, @browser)
