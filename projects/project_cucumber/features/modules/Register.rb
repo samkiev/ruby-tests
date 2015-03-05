@@ -16,6 +16,7 @@ include Verification
 
     #fill fields
       browser.find_element(class: "register").click
+      sleep 2
       browser.find_element(id: "user_login").send_key login
       browser.find_element(id: "user_password").send_key password
       browser.find_element(id: "user_password_confirmation").send_key password

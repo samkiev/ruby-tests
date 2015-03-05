@@ -9,11 +9,6 @@ module Verification
 
   end
 
-#Check text for Verificatio for "Title"
-
-  def message_for_title(message, browser)
-    browser.title.include? message
-  end
 
 #check text for Verification of login
 
@@ -25,7 +20,7 @@ module Verification
 #Check result of add mew user"
 
   def check_add_user(name_new_user, browser)
-   (browser.find_element(partial_link_text: name_new_user)).displayed?
+   expect(browser.find_element(partial_link_text: name_new_user)).to be_truthy
   end
 
 #Check text for Verification of change roles
@@ -37,13 +32,13 @@ module Verification
 #Check result of creation Version name"
 
   def check_create_version(version_name, browser)
-    browser.find_element(partial_link_text: version_name).displayed?
+    expect(browser.find_element(partial_link_text: version_name)).to be_truthy
   end
 
 #Check of issue visible
   def check_displayed_issue(issue_id_bug, browser)
     browser.find_element(class: "selected").click
-      fail 'Did not meet expected result' unless(browser.find_element(link_text: issue_id_bug)).displayed?
-        puts "All issue is visible on ‘Issues’ tab = OK"
+      expect(browser.find_element(link_text: issue_id_bug)).to be_truthy
+
   end
 end

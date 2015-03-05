@@ -48,8 +48,8 @@ include(Verification)
   # Create Project Version
   def create_new_project_version(version_name, browser)
     browser.find_element(id: "tab-versions").click
-    sleep 2
     browser.find_element(class: "icon-add").click
+    sleep 2
     browser.find_element(id: "version_name").send_keys version_name
     browser.find_element(name: "commit").click
   sleep 2
